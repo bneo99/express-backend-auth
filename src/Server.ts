@@ -1,4 +1,3 @@
-import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import path from 'path';
 import helmet from 'helmet';
@@ -9,12 +8,13 @@ import 'express-async-errors';
 
 import BaseRouter from './routes';
 import logger from '@shared/Logger';
-import { cookieProps } from '@shared/constants';
+import { Bearer } from 'permit';
 
 const app = express();
 const { BAD_REQUEST } = StatusCodes;
 
-
+// permit used here to verify if user contains token before showing user page
+const permit = new Bearer({ query: 'token' });
 
 /************************************************************************************
  *                              Set basic express settings
@@ -22,7 +22,6 @@ const { BAD_REQUEST } = StatusCodes;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(cookieParser(cookieProps.secret));
 
 // Show routes called in console during development
 if (process.env.NODE_ENV === 'development') {
@@ -62,7 +61,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.get('/users', (req: Request, res: Response) => {
-    const jwt = req.signedCookies[cookieProps.key];
+    const jwt = permit.check(req);
     if (!jwt) {
         res.redirect('/');
     } else {

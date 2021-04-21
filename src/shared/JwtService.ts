@@ -2,7 +2,7 @@
 
 import randomString from 'randomstring';
 import jsonwebtoken, { VerifyErrors } from 'jsonwebtoken';
-import { cookieProps } from '@shared/constants';
+import { jwtMaxAge } from '@shared/constants';
 
 
 export interface IClientData {
@@ -18,12 +18,12 @@ export class JwtService {
 
     private readonly secret: string;
     private readonly options: IOptions;
-    private readonly VALIDATION_ERROR = 'JSON-web-token validation failed.';
+    private readonly VALIDATION_ERROR = { error:'JSON-web-token validation failed.' };
 
 
     constructor() {
         this.secret = (process.env.JWT_SECRET || randomString.generate(100));
-        this.options = {expiresIn: cookieProps.options.maxAge.toString()};
+        this.options = {expiresIn: jwtMaxAge.toString()};
     }
 
 
@@ -47,9 +47,9 @@ export class JwtService {
      * @param jwt
      */
     public decodeJwt(jwt: string): Promise<IClientData> {
-        return new Promise((res, rej) => {
+        return new Promise((resolve, reject) => {
             jsonwebtoken.verify(jwt, this.secret, (err: VerifyErrors | null, decoded?: object) => {
-                return err ? rej(this.VALIDATION_ERROR) : res(decoded as IClientData);
+                return err ? reject(err) : resolve(decoded as IClientData);
             });
         });
     }

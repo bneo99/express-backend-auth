@@ -4,7 +4,7 @@ import StatusCodes from 'http-status-codes';
 
 import UserDao from '@daos/User/UserDao.mock';
 import { JwtService } from '@shared/JwtService';
-import { paramMissingError, loginFailedErr, cookieProps } from '@shared/constants';
+import { paramMissingError, loginFailedErr } from '@shared/constants';
 
 const userDao = new UserDao();
 const jwtService = new JwtService();
@@ -14,10 +14,10 @@ const { BAD_REQUEST, OK, UNAUTHORIZED } = StatusCodes;
 
 /**
  * Login in a user.
- * 
- * @param req 
- * @param res 
- * @returns 
+ *
+ * @param req
+ * @param res
+ * @returns
  */
 export async function login(req: Request, res: Response) {
     // Check email and password present
@@ -46,23 +46,20 @@ export async function login(req: Request, res: Response) {
         id: user.id,
         role: user.role,
     });
-    const { key, options } = cookieProps;
-    res.cookie(key, jwt, options);
     // Return
-    return res.status(OK).end();
+    return res.status(OK).json({
+      token: jwt,
+    });
 }
 
 
 /**
  * Logout the user.
- * 
- * @param req 
- * @param res 
- * @returns 
+ *
+ * @param req
+ * @param res
+ * @returns
  */
 export async function logout(req: Request, res: Response) {
-    const { key, options } = cookieProps;
-    res.clearCookie(key, options);
     return res.status(OK).end();
 }
-

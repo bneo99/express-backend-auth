@@ -1,12 +1,14 @@
 var Http = (function () {
     // Setup request for json
     var getOptions = function (verb, data) {
+        const token = sessionStorage.getItem('token');
         var options = {
             dataType: 'json',
             method: verb,
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             }
         };
         if (data) {

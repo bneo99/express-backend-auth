@@ -9,8 +9,11 @@ document.addEventListener('click', function (event) {
             password: pwdInput.value
         };
         Http.Post('/api/auth/login', data)
-            .then(() => {
-                window.location.href = '/users';
-            })
+            .then(res => res.json()
+              .then(data => {
+                sessionStorage.setItem('token', data.token);
+                window.location.href = '/users?token=' + data.token;
+              })
+            );
     }
 }, false)
