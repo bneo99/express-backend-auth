@@ -1,4 +1,6 @@
-# sugar-backend
+# express-backend-auth
+
+Basic Express.JS backend server with Bearer authorization
 
 ## Available commands for the server.
 
