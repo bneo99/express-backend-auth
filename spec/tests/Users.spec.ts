@@ -23,13 +23,13 @@ describe('UserRouter', () => {
     const deleteUserPath = `${usersPath}/delete/:id`;
 
     let agent: SuperTest<Test>;
-    let jwtCookie: string;
+    let jwt: string;
 
 
     beforeAll((done) => {
         agent = supertest.agent(app);
-        login(agent, (cookie: string) => {
-            jwtCookie = cookie;
+        login(agent, (token: string) => {
+            jwt = token;
             done();
         });
     });
@@ -38,7 +38,7 @@ describe('UserRouter', () => {
     describe(`"GET:${getUsersPath}"`, () => {
 
         const callApi = () => {
-            return agent.get(getUsersPath).set('Cookie', jwtCookie);
+            return agent.get(getUsersPath).set('Authorization', 'Bearer ' + jwt);
         };
 
 
@@ -88,9 +88,8 @@ describe('UserRouter', () => {
     describe(`"POST:${addUsersPath}"`, () => {
 
         const callApi = (reqBody: IReqBody) => {
-            return agent.post(addUsersPath).set('Cookie', jwtCookie).type('form').send(reqBody);
+            return agent.post(addUsersPath).set('Authorization', 'Bearer ' + jwt).type('form').send(reqBody);
         };
-
         const userData = {
             user: new User('Gordan Freeman', 'gordan.freeman@gmail.com'),
         };
@@ -140,7 +139,7 @@ describe('UserRouter', () => {
     describe(`"PUT:${updateUserPath}"`, () => {
 
         const callApi = (reqBody: IReqBody) => {
-            return agent.put(updateUserPath).set('Cookie', jwtCookie).type('form').send(reqBody);
+            return agent.put(updateUserPath).set('Authorization', 'Bearer ' + jwt).type('form').send(reqBody);
         };
 
         const userData = {
@@ -193,7 +192,7 @@ describe('UserRouter', () => {
 
         const callApi = (id: number) => {
             const path = deleteUserPath.replace(':id', id.toString());
-            return agent.delete(path).set('Cookie', jwtCookie);
+            return agent.delete(path).set('Authorization', 'Bearer ' + jwt);
         };
 
 

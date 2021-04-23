@@ -26,6 +26,6 @@ export const login = (beforeAgent: SuperTest<Test>, done: (arg: string) => void)
             if (err) {
                 throw err;
             }
-            done(res.headers['set-cookie']);
+            done(res.body.token);
         });
 };

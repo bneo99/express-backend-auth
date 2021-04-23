@@ -6,7 +6,7 @@ import { SuperTest, Test } from 'supertest';
 import app from '@server';
 import UserDao from '@daos/User/UserDao.mock';
 import { User, UserRoles } from '@entities/User';
-import { pwdSaltRounds, cookieProps, loginFailedErr } from '@shared/constants';
+import { pwdSaltRounds, loginFailedErr } from '@shared/constants';
 import { pErr } from '@shared/functions';
 import { IReqBody, IResponse } from '../support/types';
 
@@ -34,7 +34,7 @@ describe('UserRouter', () => {
         };
 
 
-        it(`should return a response with a status of ${OK} and a cookie with a jwt if the login
+        it(`should return a response with a status of ${OK} and body with a jwt token if the login
             was successful.`, (done) => {
             // Setup Dummy Data
             const creds = {
@@ -50,7 +50,7 @@ describe('UserRouter', () => {
                 .end((err: Error, res: IResponse) => {
                     pErr(err);
                     expect(res.status).toBe(OK);
-                    expect(res.headers['set-cookie'][0]).toContain(cookieProps.key);
+                    expect(Object.keys(res.body)).toContain('token');
                     done();
                 });
         });
@@ -135,4 +135,3 @@ describe('UserRouter', () => {
         return bcrypt.hashSync(pwd, pwdSaltRounds);
     }
 });
-
